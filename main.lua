@@ -1,20 +1,25 @@
 function love.load()
 	for k, v in pairs(love.filesystem.getDirectoryItems("resources/lua")) do
-		if not(v == "LUBE.lua") then
-			require("resources/lua/"..string.gsub(v, ".lua", ""))
-			print("Included "..v)
-		end
+		require("resources/lua/"..string.gsub(v, ".lua", ""))
+		print("Included "..v)
 	end
 
+	msg = require("resources/lib/MessagePack")
 	joysticks = love.joystick.getJoysticks()
-	
 	ply = player.create()
 end
 
 function love.update(dt)
-	if joysticks[1]:getGamepadAxis("leftx") < -0.2 or joysticks[1]:getGamepadAxis("leftx") > 0.2 or joysticks[1]:getGamepadAxis("lefty") < -0.2 or joysticks[1]:getGamepadAxis("lefty") > 0.2 then
-		ply:move(joysticks[1]:getGamepadAxis("leftx"), joysticks[1]:getGamepadAxis("lefty"), dt)
+	if #joysticks == 1 then
+		if joysticks[1]:getGamepadAxis("leftx") < -0.2 or joysticks[1]:getGamepadAxis("leftx") > 0.2 or joysticks[1]:getGamepadAxis("lefty") < -0.2 or joysticks[1]:getGamepadAxis("lefty") > 0.2 then
+			ply:move(joysticks[1]:getGamepadAxis("leftx"), joysticks[1]:getGamepadAxis("lefty"), dt)
+		end
+		if joysticks[1]:getGamepadAxis("triggerright") > 0.5 then
+			ply:fire()
+		end
 	end
+
+	ply:update(dt)
 
 	for k, v in pairs(projectile.projectiles) do
 		v:update(dt, k)
@@ -49,5 +54,10 @@ function love.draw()
 end
 
 function love.gamepadpressed(joystick, button)
-	ply:gamepadpressed(joystick, button)
+	if button == "start" then
+		ply:save()
+	end
+	if button == "back" then
+		ply:load()
+	end
 end

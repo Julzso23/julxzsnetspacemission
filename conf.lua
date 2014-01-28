@@ -1,5 +1,5 @@
 function love.conf(t)
-	t.identity = nil
+	t.identity = "JulxzsnetSpaceMission"
 	t.version = "0.9.0"
 	t.console = true
 

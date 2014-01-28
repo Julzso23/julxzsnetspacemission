@@ -69,6 +69,7 @@ function hostile:checkCollisions(obj, key)
 	for k, v in pairs(obj) do
 		if v.x > self.x-self.size/2 and v.x < self.x+self.size/2 and v.y > self.y-self.size/2 and v.y < self.y+self.size/2 then
 			table.remove(hostile.hostiles, key)
+			table.remove(obj, k)
 		end
 	end
 end

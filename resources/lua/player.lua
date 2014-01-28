@@ -1,5 +1,9 @@
 player = {}
 player.__index = player
+player.timer = 0
+player.fireDelay = 0.1
+
+local mp = require("resources/lib/MessagePack")
 
 function player.create()
 	local p = {}
@@ -24,8 +28,30 @@ function player:draw()
 	love.graphics.draw(self.img, self.x, self.y, self.r, 0.5, 0.5, self.img:getWidth()/2, self.img:getHeight()/2)
 end
 
-function player:gamepadpressed(joystick, button)
-	if button == "a" then
+function player:update(dt)
+	if self.timer < self.fireDelay then
+		self.timer = self.timer + dt
+	end
+end
+
+function player:fire()
+	if self.timer >= self.fireDelay then
+		self.timer = 0
 		table.insert(projectile.projectiles, projectile.create(self.x+math.cos(self.r-math.rad(90)), self.y+math.sin(self.r-math.rad(90)), self.r))
 	end
+end
+
+function player:save()
+	love.filesystem.write("test.txt", mp.pack({
+		x=self.x,
+		y=self.y,
+		r=self.r
+	}))
+end
+function player:load()
+	local data = love.filesystem.read("test.txt")
+	data = mp.unpack(data)
+	self.x = data.x
+	self.y = data.y
+	self.r = data.r
 end
