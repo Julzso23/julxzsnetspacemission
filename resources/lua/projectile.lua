@@ -3,7 +3,7 @@ projectile.__index = projectile
 
 projectile.projectiles = {}
 
-function projectile.create(x, y, r)
+function projectile.create(x, y, r, col)
 	local p = {}
 	setmetatable(p, projectile)
 	p.x = x
@@ -11,6 +11,7 @@ function projectile.create(x, y, r)
 	p.r = r
 	p.spd = 400
 	p.len = 5
+	p.colour = col
 	
 	return p
 end
@@ -25,6 +26,6 @@ function projectile:update(dt, k)
 end
 
 function projectile:draw()
-	love.graphics.setColor(255, 100, 100, 255)
+	love.graphics.setColor(self.colour)
 	love.graphics.line(self.x, self.y, self.x-self.len*math.cos(self.r-math.rad(90)), self.y-self.len*math.sin(self.r-math.rad(90)))
 end

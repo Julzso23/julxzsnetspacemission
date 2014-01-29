@@ -1,7 +1,7 @@
 player = {}
 player.__index = player
-player.timer = 0
-player.fireDelay = 0.2
+
+player.projectiles = {}
 
 local mp = require("resources/lib/MessagePack")
 
@@ -13,7 +13,11 @@ function player.create()
 	p.r = 0
 	p.spd = 200
 	p.img = love.graphics.newImage("resources/images/playerSprite.png")
-	
+	p.timer = 0
+	p.fireDelay = 0.2
+	p.health = 100
+
+	print(p.health)
 	return p
 end
 
@@ -34,10 +38,28 @@ function player:update(dt)
 	end
 end
 
+function player:checkCollisions(obj)
+	for k, v in pairs(obj) do
+		if v.x > self.x-self.img:getWidth()/3 and v.x < self.x+self.img:getWidth()/3 and v.y > self.y-self.img:getHeight()/3 and v.y < self.y+self.img:getHeight()/3 then
+			table.remove(obj, k)
+			self:onHit()
+		end
+	end
+end
+
+function player:onHit()
+	if self.health >= 10 then
+		self.health = self.health - 10
+	else
+		self.health = 0
+	end
+	print(self.health)
+end
+
 function player:fire()
 	if self.timer >= self.fireDelay then
+		table.insert(player.projectiles, projectile.create(self.x+math.cos(self.r-math.rad(90)), self.y+math.sin(self.r-math.rad(90)), self.r, {100, 255, 100, 255}))
 		self.timer = 0
-		table.insert(projectile.projectiles, projectile.create(self.x+math.cos(self.r-math.rad(90)), self.y+math.sin(self.r-math.rad(90)), self.r))
 	end
 end
 

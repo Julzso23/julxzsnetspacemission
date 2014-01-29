@@ -22,8 +22,12 @@ function love.update(dt)
 	end
 
 	ply:update(dt)
+	ply:checkCollisions(hostile.projectiles)
 
-	for k, v in pairs(projectile.projectiles) do
+	for k, v in pairs(player.projectiles) do
+		v:update(dt, k)
+	end
+	for k, v in pairs(hostile.projectiles) do
 		v:update(dt, k)
 	end
 
@@ -33,8 +37,8 @@ function love.update(dt)
 		v:update(dt, ply)
 	end
 	for k, v in pairs(hostile.hostiles) do
-		v:update(dt)
-		v:checkCollisions(projectile.projectiles, k)
+		v:update(dt, k, ply)
+		v:checkCollisions(player.projectiles, k)
 	end
 end
 
@@ -43,7 +47,10 @@ function love.draw()
 		v:draw()
 	end
 
-	for k, v in pairs(projectile.projectiles) do
+	for k, v in pairs(player.projectiles) do
+		v:draw()
+	end
+	for k, v in pairs(hostile.projectiles) do
 		v:draw()
 	end
 
