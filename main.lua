@@ -4,6 +4,8 @@ function love.load()
 		print("Included "..v)
 	end
 
+	spaceParticle.generate()
+
 	msg = require("resources/lib/MessagePack")
 	joysticks = love.joystick.getJoysticks()
 	ply = player.create()
@@ -25,11 +27,10 @@ function love.update(dt)
 		v:update(dt, k)
 	end
 
-	spaceParticle.generate(dt)
 	hostile.generate(dt)
 
 	for k, v in pairs(spaceParticle.particles) do
-		v:update(dt, k)
+		v:update(dt, ply)
 	end
 	for k, v in pairs(hostile.hostiles) do
 		v:update(dt)

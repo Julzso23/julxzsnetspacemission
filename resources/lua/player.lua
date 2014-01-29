@@ -1,7 +1,7 @@
 player = {}
 player.__index = player
 player.timer = 0
-player.fireDelay = 0.1
+player.fireDelay = 0.2
 
 local mp = require("resources/lib/MessagePack")
 
