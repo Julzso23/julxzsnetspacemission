@@ -36,6 +36,9 @@ function player:update(dt)
 	if self.timer < self.fireDelay then
 		self.timer = self.timer + dt
 	end
+	if self.health < 100 then
+		self.health = self.health + 2*dt
+	end
 end
 
 function player:checkCollisions(obj)
@@ -58,7 +61,7 @@ end
 
 function player:fire()
 	if self.timer >= self.fireDelay then
-		table.insert(player.projectiles, projectile.create(self.x+math.cos(self.r-math.rad(90)), self.y+math.sin(self.r-math.rad(90)), self.r, {100, 255, 100, 255}))
+		table.insert(player.projectiles, projectile.create(self.x+math.cos(self.r-math.rad(90)), self.y+math.sin(self.r-math.rad(90)), self.r, 400, {100, 255, 100, 255}))
 		self.timer = 0
 	end
 end

@@ -3,13 +3,13 @@ projectile.__index = projectile
 
 projectile.projectiles = {}
 
-function projectile.create(x, y, r, col)
+function projectile.create(x, y, r, spd, col)
 	local p = {}
 	setmetatable(p, projectile)
 	p.x = x
 	p.y = y
 	p.r = r
-	p.spd = 400
+	p.spd = spd
 	p.len = 5
 	p.colour = col
 	

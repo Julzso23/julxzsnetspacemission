@@ -35,7 +35,7 @@ function hostile:update(dt, key, player)
 	if self.timer < self.fireDelay then
 		self.timer = self.timer + dt
 	else
-		table.insert(hostile.projectiles, projectile.create(self.x, self.y, math.atan2(player.y-self.y, player.x-self.x)+math.rad(90), {255, 100, 100, 255}))
+		table.insert(hostile.projectiles, projectile.create(self.x, self.y, math.atan2(player.y-self.y, player.x-self.x)+math.rad(math.random(82, 98)), 250, {255, 100, 100, 255}))
 		self.timer = 0
 	end
 
