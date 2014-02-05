@@ -1,71 +1,30 @@
+require("resources/lua/hook")
+
 function love.load()
 	for k, v in pairs(love.filesystem.getDirectoryItems("resources/lua")) do
 		require("resources/lua/"..string.gsub(v, ".lua", ""))
-		print("Included "..v)
 	end
-
-	spaceParticle.generate()
-
-	msg = require("resources/lib/MessagePack")
-	joysticks = love.joystick.getJoysticks()
-	ply = player.create()
+	hook.Call("load")
 end
 
-function love.update(dt)
-	if #joysticks == 1 then
-		if joysticks[1]:getGamepadAxis("leftx") < -0.2 or joysticks[1]:getGamepadAxis("leftx") > 0.2 or joysticks[1]:getGamepadAxis("lefty") < -0.2 or joysticks[1]:getGamepadAxis("lefty") > 0.2 then
-			ply:move(joysticks[1]:getGamepadAxis("leftx"), joysticks[1]:getGamepadAxis("lefty"), dt)
-		end
-		if joysticks[1]:getGamepadAxis("triggerright") > 0.5 then
-			ply:fire()
-		end
-	end
+function love.update(dt) hook.Call("update", dt) end
 
-	ply:update(dt)
-	ply:checkCollisions(hostile.projectiles)
+function love.draw() hook.Call("draw") end
 
-	for k, v in pairs(player.projectiles) do
-		v:update(dt, k)
-	end
-	for k, v in pairs(hostile.projectiles) do
-		v:update(dt, k)
-	end
+function love.keypressed(key, isRepeat) hook.Call("keypressed", key, isRepeat) end
 
-	hostile.generate(dt)
+function love.keyreleased(key) hook.Call("keyreleased", key) end
 
-	for k, v in pairs(spaceParticle.particles) do
-		v:update(dt, ply)
-	end
-	for k, v in pairs(hostile.hostiles) do
-		v:update(dt, k, ply)
-		v:checkCollisions(player.projectiles, k)
-	end
-end
+function love.gamepadpressed(joystick, button) hook.Call("gamepadpressed", joystick, button) end
 
-function love.draw()
-	for k, v in pairs(spaceParticle.particles) do
-		v:draw()
-	end
+function love.gamepadreleased(joystick, button) hook.Call("gamepadreleased", joystick, button) end
 
-	for k, v in pairs(player.projectiles) do
-		v:draw()
-	end
-	for k, v in pairs(hostile.projectiles) do
-		v:draw()
-	end
+function love.gamepadaxis(joystick, axis) hook.Call("gamepadaxis", joystick, axis) end
 
-	ply:draw()
+function love.mousepressed(x, y, button) hook.Call("mousepressed", x, y, button) end
 
-	for k, v in pairs(hostile.hostiles) do
-		v:draw()
-	end
-end
+function love.mousereleased(x, y, button) hook.Call("mousereleased", x, y, button) end
 
-function love.gamepadpressed(joystick, button)
-	if button == "start" then
-		ply:save()
-	end
-	if button == "back" then
-		ply:load()
-	end
-end
+function love.joystickadded(joystick) hook.Call("joystickadded", joystick) end
+
+function love.joystickremoved(joystick) hook.Call("joystickremoved", joystick) end

@@ -60,3 +60,26 @@ function hostile:checkCollisions(obj, key)
 		end
 	end
 end
+
+hook.Add("update", "hostileUpdate", function(dt)
+	hostile.generate(dt)
+
+	for k, v in pairs(hostile.hostiles) do
+		v:update(dt, k, player.players[1])
+		v:checkCollisions(player.projectiles, k)
+	end
+
+	for k, v in pairs(hostile.projectiles) do
+		v:update(dt, k)
+	end
+end)
+
+hook.Add("draw", "hostileDraw", function()
+	for k, v in pairs(hostile.projectiles) do
+		v:draw()
+	end
+	
+	for k, v in pairs(hostile.hostiles) do
+		v:draw()
+	end
+end)

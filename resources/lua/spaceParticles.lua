@@ -34,3 +34,19 @@ function spaceParticle:draw()
 	love.graphics.setColor(255, 255, 255, 150)
 	love.graphics.rectangle("fill", self.x, self.y, self.size, self.size)
 end
+
+hook.Add("load", "generateSpaceParticles", function()
+	spaceParticle.generate()
+end)
+
+hook.Add("update", "updateSpaceParticles", function(dt)
+	for k, v in pairs(spaceParticle.particles) do
+		v:update(dt, player.players[1])
+	end
+end)
+
+hook.Add("draw", "drawSpaceParticles", function()
+	for k, v in pairs(spaceParticle.particles) do
+		v:draw()
+	end
+end)

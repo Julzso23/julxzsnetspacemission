@@ -1,6 +1,7 @@
 player = {}
 player.__index = player
 
+player.players = {}
 player.projectiles = {}
 
 local mp = require("resources/lib/MessagePack")
@@ -17,7 +18,6 @@ function player.create()
 	p.fireDelay = 0.2
 	p.health = 100
 
-	print(p.health)
 	return p
 end
 
@@ -56,7 +56,6 @@ function player:onHit()
 	else
 		self.health = 0
 	end
-	print(self.health)
 end
 
 function player:fire()
@@ -66,17 +65,46 @@ function player:fire()
 	end
 end
 
-function player:save()
-	love.filesystem.write("test.txt", mp.pack({
-		x=self.x,
-		y=self.y,
-		r=self.r
-	}))
-end
-function player:load()
-	local data = love.filesystem.read("test.txt")
-	data = mp.unpack(data)
-	self.x = data.x
-	self.y = data.y
-	self.r = data.r
-end
+hook.Add("load", "addPlayer", function()
+	joysticks = love.joystick.getJoysticks()
+	table.insert(player.players, player.create())
+end)
+
+hook.Add("update", "playerUpdate", function(dt)
+	for k, v in pairs(player.players) do
+		v:update(dt)
+		v:checkCollisions(hostile.projectiles)
+	end
+
+	for k, v in pairs(player.projectiles) do
+		v:update(dt, k)
+	end
+
+	if #joysticks >= 1 then
+		if joysticks[1]:getGamepadAxis("leftx") < -0.2 or joysticks[1]:getGamepadAxis("leftx") > 0.2 or joysticks[1]:getGamepadAxis("lefty") < -0.2 or joysticks[1]:getGamepadAxis("lefty") > 0.2 then
+			player.players[1]:move(joysticks[1]:getGamepadAxis("leftx"), joysticks[1]:getGamepadAxis("lefty"), dt)
+		end
+		if joysticks[1]:getGamepadAxis("triggerright") > 0.5 then
+			player.players[1]:fire()
+		end
+	end
+end)
+
+hook.Add("draw", "playerDraw", function()
+	for k, v in pairs(player.projectiles) do
+		v:draw()
+	end
+	
+	for k, v in pairs(player.players) do
+		v:draw()
+	end
+end)
+
+hook.Add("gamepadpressed", "playerControls", function(joystick, button)
+	if button == "start" then
+		player.players[1]:save()
+	end
+	if button == "back" then
+		player.players[1]:load()
+	end
+end)
