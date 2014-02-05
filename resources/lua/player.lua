@@ -61,6 +61,7 @@ end
 function player:fire()
 	if self.timer >= self.fireDelay then
 		table.insert(player.projectiles, projectile.create(self.x+math.cos(self.r-math.rad(90)), self.y+math.sin(self.r-math.rad(90)), self.r, 400, {100, 255, 100, 255}))
+		net.send("fire")
 		self.timer = 0
 	end
 end

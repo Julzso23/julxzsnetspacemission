@@ -72,7 +72,7 @@ end)
 
 hook.Add("draw", "playerDraw", function()
 	for k, v in pairs(player.projectiles) do
-		v[2]:draw()
+		v:draw()
 	end
 	
 	for k, v in pairs(player.players) do

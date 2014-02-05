@@ -1,3 +1,26 @@
+local commands = {
+	{"connect", function(dat, ip)
+		print(ip.."connected")
+		table.insert(player.players, {ip, player.create()})
+	end},
+	{"update", function(dat, ip)
+		for k, v in pairs(player.players) do
+			if v[1] == ip then
+				v[2].x = dat.x
+				v[2].y = dat.y
+				v[2].r = dat.r
+			end
+		end
+	end},
+	{"fire", function(dat, ip)
+		for k, v in pairs(player.players) do
+			if ip == v[1] then
+				table.insert(player.projectiles, projectile.create(v[2].x+math.cos(v[2].r-math.rad(90)), v[2].y+math.sin(v[2].r-math.rad(90)), v[2].r, 400, {100, 255, 100, 255}))
+			end
+		end
+	end}
+}
+
 hook.Add("load", "setupServer", function()
 	socket = require("socket")
 	msgp = require("resources/lib/MessagePack")
@@ -6,22 +29,17 @@ hook.Add("load", "setupServer", function()
 	udp:setsockname("*", 9001)
 end)
 
-hook.Add("update", "updateClients", function(dt)
+hook.Add("update", "NWMessageHandler", function(dt)
 	local data, msg, port = udp:receivefrom()
 	if data then
 		local d = msgp.unpack(data)
-		if d == "connect" then
-			print(msg.." connected")
-			table.insert(player.players, {msg, player.create()})
-		else
-			for k, v in pairs(player.players) do
-				if v[1] == msg then
-					v[2].x = d.x
-					v[2].y = d.y
-					v[2].r = d.r
-				end
+
+		for _, c in pairs(commands) do
+			if d[1] == c[1] then
+				c[2](d[2], msg)
 			end
 		end
+
 		udp:sendto(data, msg, port)
 	elseif msg == "timout" then
 		error("Network error: "..tostring(msg))
