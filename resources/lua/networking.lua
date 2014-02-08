@@ -17,7 +17,7 @@ hook.Add("update", "netUpdate", function(dt)
 	local data, msg = net.udp:receive()
 	if data then
 		local d = msgp.unpack(data)
-		if d == "connect" then
+		if d[1] == "connect" then
 			print("Connected successfully")
 		end
 		net.udp:send(msgp.pack(dat))
@@ -29,3 +29,7 @@ end)
 function net.send(data)
 	net.udp:send(msgp.pack({data}))
 end
+
+hook.Add("quit", "disconnect", function()
+	net.udp:send(msgp.pack({"disconnect"}))
+end)

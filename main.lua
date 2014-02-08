@@ -28,3 +28,5 @@ function love.mousereleased(x, y, button) hook.Call("mousereleased", x, y, butto
 function love.joystickadded(joystick) hook.Call("joystickadded", joystick) end
 
 function love.joystickremoved(joystick) hook.Call("joystickremoved", joystick) end
+
+function love.quit() hook.Call("quit") end
